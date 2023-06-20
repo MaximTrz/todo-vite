@@ -54,7 +54,7 @@ export default createStore <State> ({
       //   Object.keys(filters).forEach(function(filterKey) {
       //     filters[filterKey] = (filterKey === key);
       //   });
-      }     
+      //}     
     }    
   },
   actions: {
