@@ -1,10 +1,13 @@
 <template>
-  <button class="button" :class="classes">{{ filter.label }}</button>
+  <button class="button" :class="classes" @click="changeFilter(filter)">
+    {{ filter.label }}
+  </button>
 </template>
 
 <script lang="ts">
 import { PropType, defineComponent } from "vue";
 import { Filter } from "@/types/Filter";
+import { mapMutations } from "vuex";
 
 export default defineComponent({
   props: {
@@ -19,6 +22,9 @@ export default defineComponent({
         "button--primary": this.filter.active,
       };
     },
+  },
+  methods: {
+    ...mapMutations(["changeFilter"]),
   },
 });
 </script>

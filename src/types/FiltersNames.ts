@@ -1,5 +1,1 @@
-export enum FilterNames {
-    all = "all",
-    active = "active",
-    done = "done"
-}
+export type FiltersNames = "all" | "active" | "done"

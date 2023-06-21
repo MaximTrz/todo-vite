@@ -1,7 +1,7 @@
 <template>
   <ul class="todo-list">
     <app-todo-item
-      v-for="todo in todos"
+      v-for="todo in filteredTodos"
       :key="todo.id"
       :todo="todo"
     ></app-todo-item>
@@ -16,7 +16,7 @@ import { mapGetters } from "vuex";
 export default defineComponent({
   components: { AppTodoItem },
   computed: {
-    ...mapGetters(["todos"]),
+    ...mapGetters(["filteredTodos"]),
   },
 });
 </script>

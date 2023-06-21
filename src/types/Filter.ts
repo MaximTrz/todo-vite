@@ -1,5 +1,6 @@
+import { FiltersNames } from "./FiltersNames";
 export interface Filter {    
-    name: string;
+    name: FiltersNames;
     label: string;
     active: boolean;     
 }
