@@ -11,6 +11,7 @@ export default class ApiService {
     setToken = (token:string) => (this._token = token);
 
     getResource = async (url: string) => {
+      //console.log(`${this._basePath}${url}`);
         const res = await this.sendRequestWithAuthHeader(
           "GET",
           `${this._basePath}${url}`,         

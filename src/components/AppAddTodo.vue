@@ -39,6 +39,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({ addTodoAction: "addTodo" }),
+    ...mapActions(["getAllTasks"]),
     addTodo() {
       if (this.text.trim().length === 0) {
         return;
@@ -47,6 +48,7 @@ export default defineComponent({
       this.text = "";
     },
     toggleFormVisible() {
+      this.getAllTasks();
       this.isFormVisible = !this.isFormVisible;
     },
   },

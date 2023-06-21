@@ -2,11 +2,13 @@ import { createStore } from "vuex";
 import { Todo } from "@/types/Todo";
 import { Filter } from "@/types/Filter";
 import { FiltersNames } from "@/types/FiltersNames";
+import ApiService from "../ApiService";
 
 interface State {
   ai: number,
   todos: Todo[],
-  filters: Filter[]
+  filters: Filter[],
+  apiService: ApiService
 }
 
 export default createStore <State> ({
@@ -21,8 +23,9 @@ export default createStore <State> ({
       {name: "all", label: "Все", active: true},
       {name: "active", label: "Активные", active: false},
       {name: "done", label: "Завершенные", active: false},
-    ]
-    
+    ],
+
+    apiService: new ApiService(),    
     
   },
   getters: {    
@@ -63,9 +66,17 @@ export default createStore <State> ({
       for (let targetFilter of state.filters) {
         targetFilter.active = targetFilter === filter
       }
+    },
+    setTodos(state, todos: Object[]){
+
     }   
   },
   actions: {
+    getAllTasks({state}){
+      state.apiService.getAllTasks().then(result =>{
+        //state.todos = JSON.parse(result.data);
+      }) ;
+    },
     toggleTodo({commit}, id: number){
       commit("changeTodoStatus", id);              
     },
