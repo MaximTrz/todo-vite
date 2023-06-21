@@ -1,6 +1,7 @@
 import { createStore } from "vuex";
 import { Todo } from "@/types/Todo";
 import { Filter } from "@/types/Filter";
+import { FiltersNames } from "@/types/FiltersNames";
 
 interface State {
   ai: number,
@@ -24,14 +25,16 @@ export default createStore <State> ({
     
     
   },
-  getters: {
-    todos: (state) => state.todos,
-    filters: (state)=>state.filters,
-    activeFilter: (state) => state.filters.find(filter => filter.active)?.name,
-    filteredTodos: (state, getters)=>{
+  getters: {    
+    filters: (state):Filter[]=>state.filters,
+    activeFilter: (state): FiltersNames => {
+      const activeFilter = state.filters.find(filter => filter.active);
+      return activeFilter ? activeFilter.name : "all";
+    },
+    filteredTodos: (state, getters: { activeFilter: FiltersNames }):Todo[]=>{
       switch (getters.activeFilter) {
         case "all":
-          return getters.todos          
+          return state.todos          
         case "active":{
           return state.todos.filter((todo)=>!todo.completed)
         }
@@ -39,7 +42,7 @@ export default createStore <State> ({
           return state.todos.filter((todo)=>todo.completed)
         }
         default:
-          return getters.todos
+          return state.todos
       }            
     },      
   },
