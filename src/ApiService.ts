@@ -51,7 +51,7 @@ export default class ApiService {
       return this.createResult(response);
     };
 
-    updateTask = async (url: string, item: Object) => {
+    updateItem = async (url: string, item: Object) => {
         const res = await this.sendRequestWithAuthHeader(
           "PUT",
           `${this._basePath}${url}`,
@@ -60,7 +60,7 @@ export default class ApiService {
         return res;
     };
 
-    deleteTask = async (url: string) => {
+    deleteItem = async (url: string) => {
         const res = await this.sendRequestWithAuthHeader(
           "DELETE",
           `${this._basePath}${url}`
@@ -68,8 +68,8 @@ export default class ApiService {
         return res;
     };
 
-    addTask = async (item: { [key: string]: any }) => {
-      const res = await this.sendPost(`${this._basePath}task`, item);
+    addItem = async (url: string, item: { [key: string]: any }) => {
+      const res = await this.sendPost(`${this._basePath}${url}`, item);
       return res;
     };
 

@@ -2,7 +2,7 @@
   <li
     class="todo-item"
     :class="{ 'todo-item--done': todo.completed }"
-    @click="toggleTodo(todo.id)"
+    @click="toggleTodo(todo)"
   >
     <div class="todo-item__status">
       <i class="bi bi-check2"></i>

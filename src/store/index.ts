@@ -43,7 +43,13 @@ export default createStore <State> ({
         default:
           return state.todos
       }            
-    },      
+    },
+    getCountCompleted(state): Number {
+      return state.todos.filter((todo)=>todo.completed).length;
+    },
+    getCountOutstanding(state): Number {
+      return state.todos.filter((todo)=>!todo.completed).length;
+    }
   },
   mutations: {
     changeTodoStatus(state, id: number){
@@ -65,8 +71,9 @@ export default createStore <State> ({
     },
     setTodos(state, todos: Todo[]){
       let newTodos = [];
-      for (let todo of todos){
-        newTodos.push({id: todo.id, text: todo.text, completed: todo.completed == !!1})
+      for (let todo of todos){       
+        let completed = Boolean( parseInt( (todo.completed).toString() ) ) ;         
+        newTodos.push({id: todo.id, text: todo.text, completed: completed})
       }
       state.todos = newTodos;
     }   
@@ -82,11 +89,18 @@ export default createStore <State> ({
         });       
 
     },
-    toggleTodo({commit}, id: number){
-      commit("changeTodoStatus", id);              
+    toggleTodo({state, commit}, todo: Todo){
+      // Здесь есть немного неочевидная логика
+      //  в mySQL нет типа boolean, а вместо него используется tinyint
+      // Т.к. нам надо сменить статус на противоположный заменяем true на 0, false на 1      
+      state.apiService.updateItem(`task\\${todo.id}`, {...todo, completed: todo.completed ? 0 : 1 }).then(result=>{
+        if(result.result){
+          commit("changeTodoStatus", todo.id);
+        }
+      } )                
     },
     addTodo({commit}, text: string){      
-        this.state.apiService.addTask({text, completed: 0}).then(result => {
+        this.state.apiService.addItem("task",{text, completed: 0}).then(result => {
           if (result.result){
             commit("pushTodo", {id: parseInt(result.data), text: text, completed: false});
           }            
@@ -95,7 +109,7 @@ export default createStore <State> ({
         });      
     },
     deleteTodo({state, commit}, id: number){      
-      state.apiService.deleteTask(`task/${id}`).then(result => {
+      state.apiService.deleteItem(`task/${id}`).then(result => {
         if(result.result){
           commit("removeTodo", id);
         }
