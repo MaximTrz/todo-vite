@@ -11,10 +11,16 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import AppTodoItem from "./AppTodoItem.vue";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default defineComponent({
+  beforeMount() {
+    this.getAllTasks();
+  },
   components: { AppTodoItem },
+  methods: {
+    ...mapActions(["getAllTasks"]),
+  },
   computed: {
     ...mapGetters(["filteredTodos"]),
   },

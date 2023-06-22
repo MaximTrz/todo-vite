@@ -14,11 +14,7 @@ interface State {
 export default createStore <State> ({
   state: {
     ai: 3,
-    todos: [
-      { id: 0, text: "test", completed: true },
-      { id: 1, text: "test", completed: false },
-      { id: 2, text: "test", completed: false },
-    ],
+    todos: [],
     filters: [
       {name: "all", label: "Все", active: true},
       {name: "active", label: "Активные", active: false},
@@ -56,8 +52,8 @@ export default createStore <State> ({
         targetTodo.completed = !targetTodo.completed;
       }
     },
-    pushTodo(state, text: string){
-      state.todos.push({id: state.ai++, text: text, completed: false});
+    pushTodo(state, todo: Todo){
+      state.todos.push(todo);
     },
     removeTodo(state, id: number){
       state.todos = state.todos.filter((todo: Todo)=>todo.id !== id);
@@ -67,24 +63,45 @@ export default createStore <State> ({
         targetFilter.active = targetFilter === filter
       }
     },
-    setTodos(state, todos: Object[]){
-
+    setTodos(state, todos: Todo[]){
+      let newTodos = [];
+      for (let todo of todos){
+        newTodos.push({id: todo.id, text: todo.text, completed: todo.completed == !!1})
+      }
+      state.todos = newTodos;
     }   
   },
   actions: {
-    getAllTasks({state}){
-      state.apiService.getAllTasks().then(result =>{
-        //state.todos = JSON.parse(result.data);
-      }) ;
+    getAllTasks({state, commit}){
+      
+        state.apiService.getAllTasks().then(result =>{
+          const todos = JSON.parse(result.data);
+          commit("setTodos", todos);
+        }).catch(error => {
+          throw new Error("Не удалось загрузить данные с сервера");          
+        });       
+
     },
     toggleTodo({commit}, id: number){
       commit("changeTodoStatus", id);              
     },
-    addTodo({commit}, text: string){
-      commit("pushTodo", text);
+    addTodo({commit}, text: string){      
+        this.state.apiService.addTask({text, completed: 0}).then(result => {
+          if (result.result){
+            commit("pushTodo", {id: parseInt(result.data), text: text, completed: false});
+          }            
+        }).catch(error => {
+          throw new Error("Не удалось отправить данные на сервер");          
+        });      
     },
-    deleteTodo({commit}, id: number){
-      commit("removeTodo", id);
+    deleteTodo({state, commit}, id: number){      
+      state.apiService.deleteTask(`task/${id}`).then(result => {
+        if(result.result){
+          commit("removeTodo", id);
+        }
+      }).catch(error => {
+        throw new Error("Не удалось отправить данные на сервер");          
+      });           
     },
   },
   modules: {},

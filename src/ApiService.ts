@@ -29,8 +29,9 @@ export default class ApiService {
         return res;
     };
 
-    sendRequestWithAuthHeader = async (method: string, url:string, data?:object) => {
+    sendRequestWithAuthHeader = async (method: string, url:string, data?:object | FormData) => {
       const headers: { Authorization?: string } = {};
+      
       if (this._token.length) {
         headers.Authorization = this._token;
       }
@@ -40,7 +41,9 @@ export default class ApiService {
         headers: headers,        
       };
   
-      if (data) {
+      if (data instanceof FormData) {
+        options.body = data; 
+      } else if (data) {
         options.body = JSON.stringify(data);
       }
   
@@ -65,14 +68,14 @@ export default class ApiService {
         return res;
     };
 
-    addTask = async (url: string, item: Object) => {
-      const res = await this.sendPost(`${this._basePath}${url}`, item);
+    addTask = async (item: { [key: string]: any }) => {
+      const res = await this.sendPost(`${this._basePath}task`, item);
       return res;
     };
 
     sendPost = async (url: string, data: { [key: string]: any }) => {
       let formData = new FormData();
-      for (let key in data) {
+      for (let key in data) {        
         formData.append(`${key}`, data[key]);
       }
       const res = await this.sendRequestWithAuthHeader("POST", url, formData);
